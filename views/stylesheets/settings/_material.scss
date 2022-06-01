@@ -1,0 +1,21 @@
+// @import "material-components-web/index";
+@use "@material/theme" with (
+    // $primary: #ff5c1a,
+    $primary: #31b9dd,
+    $secondary: #31b9dd,
+    $surface: #fff,
+    $background: #fff,
+    $on-primary: #fff,
+    $on-secondary: #fff
+);
+
+@import "@material/radio/mdc-radio";
+@import "@material/form-field/mdc-form-field";
+@import "@material/icon-button/mdc-icon-button";
+@import "@material/elevation/mdc-elevation";
+@import "@material/top-app-bar/mdc-top-app-bar";
+@import "@material/layout-grid/mdc-layout-grid";
+@import "@material/button/mdc-button";
+@import "@material/textfield/mdc-text-field";
+@import "@material/card/mdc-card";
+@import "@material/list/mdc-list";
