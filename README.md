@@ -6,7 +6,7 @@ Este proyecto utiliza como stack:
 
 -   Node.js
 -   Express js
--   Handelbar
+-   Svelte
 
 Luego de descargar el proyecto se debe:
 
