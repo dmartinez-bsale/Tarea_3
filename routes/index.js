@@ -6,13 +6,15 @@ var express = require("express");
 var router = express.Router();
 var path = require("path");
 const ApiCall = require("../helpers/api_call");
+var environment = process.env.NODE_ENV || "development";
+var settings = require("../config/settings.json")[environment];
 
-/* GET página principal en este ejemplo se despliega un formularios */
+/* GET página donde se despliega la inpormacion de empresa */
 router.get("/companies", function (req, res, next) {
     res.sendFile(path.join(process.cwd(), "views", "layouts", "company.html"));
 });
 
-/* GET página principal en este ejemplo se despliega la inpormacion de empresa */
+/* GET página principal en este ejemplo se despliega la lista de empresas */
 router.get("/", function (req, res, next) {
     res.sendFile(
         path.join(process.cwd(), "views", "layouts", "companiesList.html")
@@ -31,7 +33,7 @@ router.get("/list", function (req, res, next) {
     res.sendFile(path.join(__dirname, "public", "list.html"));
 });
 
-// Simulación de datos para cargar el formulario con ellos
+//- Simulación de datos para cargar el formulario con ellos
 router.get("/gateway.json", (req, res, next) => {
     const data = {
         cpnPhone: "7327373278",
@@ -39,6 +41,57 @@ router.get("/gateway.json", (req, res, next) => {
         cpnStatus: false,
     };
     res.json(data);
+});
+//- Controller para enviar la consulta a la api companies
+router.get("/gateway/v1/companies.json", async (req, res, next) => {
+    console.log(req.query);
+    let url = settings.companiesApi + "/v1/companies.json?";
+    for (param in req.query) {
+        url += `&${param}=${req.query[param]}`;
+    }
+    console.log(url);
+    try {
+        let response = await ApiCall.request(url);
+
+        if (
+            response.data != undefined &&
+            response.data != null &&
+            response.data.code < 300
+        ) {
+            response = response.data.data;
+            console.log(response);
+            res.json(response);
+        } else {
+            res.status(400).json(response);
+            console.log(response);
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+});
+//- Controller para enviar la consulta a la api sobre una empresa
+router.get("/gateway/v1/companies/:id.json", async (req, res, next) => {
+    try {
+        let response = await ApiCall.request(
+            settings.companiesApi + `/v1/companies/${req.params.id}.json`
+        );
+        if (
+            response.data != undefined &&
+            response.data != null &&
+            response.data.code < 300
+        ) {
+            response = response.data.data;
+            res.status(200).json(response);
+        } else {
+            res.status(400).json({ badResponse: response });
+            console.log("Respuesta incorrecta, resp de la API:", response);
+        }
+    } catch (error) {
+        res.status(500);
+        console.log("Error no controlado, resp de la API: ", error);
+        res.json({ error: error });
+    }
 });
 
 //Ejemplo simulado de retorno de API para el despliegue de listas.
